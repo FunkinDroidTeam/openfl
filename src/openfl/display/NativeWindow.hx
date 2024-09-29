@@ -215,6 +215,8 @@ class NativeWindow extends EventDispatcher
 		__previousDisplayState = NORMAL;
 		__window.stage.nativeWindow = this;
 		NativeApplication.nativeApplication.__openedWindows.push(this);
+		__window.onActivate.add(window_onActivate);
+		__window.onDeactivate.add(window_onDeactivate);
 		__window.onFocusIn.add(window_onFocusIn);
 		__window.onFocusOut.add(window_onFocusOut);
 		__window.onMove.add(window_onMove);
@@ -824,7 +826,7 @@ class NativeWindow extends EventDispatcher
 		are smaller than the new minimum size.
 
 		The `minSize` restriction is enforced for window resizing operations
-		invoked both through Haxe code and through the operating system.
+		invoked both through haxe code and through the operating system.
 
 		Note: The width and height of any displayed system chrome may make it
 		impossible to set a window as small as the specified minimum size.
@@ -1091,6 +1093,18 @@ class NativeWindow extends EventDispatcher
 		}
 		// don't allow the original value to be edited externally
 		return __ownedWindows.copy();
+	}
+
+	@:noCompletion private inline function window_onActivate():Void
+	{
+		if (!__active)
+			window_onFocusIn();
+	}
+
+	@:noCompletion private inline function window_onDeactivate():Void
+	{
+		if (__active)
+			window_onFocusOut();
 	}
 
 	@:noCompletion private function window_onFocusIn():Void
