@@ -2326,29 +2326,7 @@ class Stage extends DisplayObjectContainer #if lime implements IModule #end
 	{
 		if (this.window == null || this.window != window) return;
 
-		#if !desktop
-		// TODO: Is this needed?
-		__renderDirty = true;
-		#end
-
-		var event:Event = null;
-
-		#if openfl_pool_events
-		event = Event.__pool.get();
-		event.type = Event.ACTIVATE;
-		#else
-		event = new Event(Event.ACTIVATE);
-		#end
-
-		__broadcastEvent(event);
-
-		#if openfl_pool_events
-		Event.__pool.release(event);
-		#end
-
-		#if !desktop
-		focus = __cacheFocus;
-		#end
+		// __broadcastEvent (new Event (Event.ACTIVATE));
 	}
 
 	@:noCompletion private function __onLimeWindowClose(window:Window):Void
@@ -2390,31 +2368,8 @@ class Stage extends DisplayObjectContainer #if lime implements IModule #end
 	{
 		if (this.window == null || this.window != window) return;
 
-		__primaryTouch = null;
-
-		var event:Event = null;
-
-		#if openfl_pool_events
-		event = Event.__pool.get();
-		event.type = Event.DEACTIVATE;
-		#else
-		event = new Event(Event.DEACTIVATE);
-		#end
-
-		__broadcastEvent(event);
-
-		#if openfl_pool_events
-		Event.__pool.release(event);
-		#end
-
-		var currentFocus = focus;
-		focus = null;
-		__cacheFocus = currentFocus;
-
-		MouseEvent.__altKey = false;
-		MouseEvent.__commandKey = false;
-		MouseEvent.__ctrlKey = false;
-		MouseEvent.__shiftKey = false;
+		// __primaryTouch = null;
+		// __broadcastEvent (new Event (Event.DEACTIVATE));
 	}
 
 	@:noCompletion private function __onLimeWindowDropFile(window:Window, file:String):Void {}
