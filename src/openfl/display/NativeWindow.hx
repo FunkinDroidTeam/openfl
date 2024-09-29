@@ -1097,37 +1097,43 @@ class NativeWindow extends EventDispatcher
 
 	@:noCompletion private inline function window_onActivate():Void
 	{
-		if (!__active)
-			window_onFocusIn();
+		window_onFocusIn();
 	}
 
 	@:noCompletion private inline function window_onDeactivate():Void
 	{
-		if (__active)
-			window_onFocusOut();
+		window_onFocusOut();
 	}
 
 	@:noCompletion private function window_onFocusIn():Void
 	{
-		__active = true;
-		NativeApplication.nativeApplication.__activeWindow = this;
-		dispatchEvent(new Event(Event.ACTIVATE, false, false));
-		// TODO: dispatch only when the previously focused window was from
-		// a different application
-		NativeApplication.nativeApplication.dispatchEvent(new Event(Event.ACTIVATE, false, false));
+		if (!__active)
+		{
+			__active = true;
+			NativeApplication.nativeApplication.__activeWindow = this;
+			dispatchEvent(new Event(Event.ACTIVATE, false, false));
+			// TODO: dispatch only when the previously focused window was from
+			// a different application
+			NativeApplication.nativeApplication.dispatchEvent(new Event(Event.ACTIVATE, false, false));
+		}
 	}
 
 	@:noCompletion private function window_onFocusOut():Void
 	{
-		__active = false;
-		if (NativeApplication.nativeApplication.__activeWindow == this)
+		if (__active)
 		{
-			NativeApplication.nativeApplication.__activeWindow = null;
-			// TODO: dispatch only when the next focused window isn't a part of
-			// this application
-			NativeApplication.nativeApplication.dispatchEvent(new Event(Event.DEACTIVATE, false, false));
+			__active = false;
+
+			if (NativeApplication.nativeApplication.__activeWindow == this)
+			{
+				NativeApplication.nativeApplication.__activeWindow = null;
+				// TODO: dispatch only when the next focused window isn't a part of
+				// this application
+				NativeApplication.nativeApplication.dispatchEvent(new Event(Event.DEACTIVATE, false, false));
+			}
+
+			dispatchEvent(new Event(Event.DEACTIVATE, false, false));
 		}
-		dispatchEvent(new Event(Event.DEACTIVATE, false, false));
 	}
 
 	@:noCompletion private function window_onMove(x:Float, y:Float):Void
